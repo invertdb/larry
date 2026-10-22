@@ -33,12 +33,12 @@ Each needs a different strategy when distributed. Blobs are immutable segments, 
 object storage with full local copies on each replica, memory-mapped as here. A replica only ever adds bytes, so
 reads stay local and nothing is ever invalidated.
 
-## References
-
-- Lorie, R. A. (1977). Physical integrity in a large segmented database. *ACM Transactions on Database Systems*
-  2(1).
-
 ## Tests
 
 `cargo test`: blobs append, keep views stable, truncate (never grow by truncation) and reopen; documents are
 replaced whole with no temporary left behind; nested stores list, refuse names that would escape, and are destroyed.
+
+## References
+
+- Lorie, R. A. (1977). Physical integrity in a large segmented database. *ACM Transactions on Database Systems*
+  2(1).
