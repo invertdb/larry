@@ -92,8 +92,19 @@ impl Store {
 
     /// Bytes on disk, everything included.
     pub fn size(&self) -> u64 {
+        // the space files take on disk (as `du` counts it), not their lengths: a file grown ahead of its data (as
+        // b-positive's is) is sparse, and its length would count space it doesn't use
+        #[cfg(unix)]
+        fn on_disk(m: &fs::Metadata) -> u64 {
+            use std::os::unix::fs::MetadataExt;
+            m.blocks() * 512
+        }
+        #[cfg(not(unix))]
+        fn on_disk(m: &fs::Metadata) -> u64 {
+            m.len()
+        }
         fn walk(path: &Path) -> u64 {
-            fs::read_dir(path).map(|entries| entries.flatten().map(|e| if e.path().is_dir() { walk(&e.path()) } else { e.metadata().map(|m| m.len()).unwrap_or(0) }).sum()).unwrap_or(0)
+            fs::read_dir(path).map(|entries| entries.flatten().map(|e| if e.path().is_dir() { walk(&e.path()) } else { e.metadata().map(|m| on_disk(&m)).unwrap_or(0) }).sum()).unwrap_or(0)
         }
         walk(&self.directory)
     }
