@@ -27,7 +27,7 @@ let index = store.store("units")?;         // a nested store
 
 All of invertdb's bulk data goes through larry: postings, positions and sources (introvert), stored documents,
 vectors, coordinate columns, time-series chunks. The B+tree ([b-positive](https://github.com/invertdb/b-positive))
-holds pages; the log ([blamo](https://github.com/invertdb/blamo)) holds writes not yet committed.
+holds pages; the log ([blammo](https://github.com/invertdb/blammo)) holds writes not yet committed.
 
 Each needs a different strategy when distributed. Blobs are immutable segments, so a cluster can keep them in
 object storage with full local copies on each replica, memory-mapped as here. A replica only ever adds bytes, so
