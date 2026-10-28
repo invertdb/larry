@@ -5,6 +5,8 @@ edition = "2024"
 
 [dependencies]
 memmap2 = "0.9.11"
+opentelemetry = { version = "0.33.1", default-features = false, features = ["metrics"] }
+tracing = { version = "0.1.44", default-features = false, features = ["std"] }
 
 [dev-dependencies]
 tempfile = "3.27.0"

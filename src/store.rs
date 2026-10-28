@@ -62,12 +62,16 @@ impl Store {
     /// Replaces a document atomically and durably: a crash leaves either the old bytes or the new.
     pub fn write(&self, name: &str, bytes: &[u8]) -> io::Result<()> {
         valid(name)?;
+        let _span = tracing::info_span!("document.write", name, bytes = bytes.len()).entered();
+        let start = std::time::Instant::now();
         let temporary = self.directory.join(format!(".{name}.new"));
         let mut file = File::create(&temporary)?;
         file.write_all(bytes)?;
         file.sync_all()?;
         fs::rename(&temporary, self.directory.join(name))?;
-        File::open(&self.directory)?.sync_all() // the rename itself
+        File::open(&self.directory)?.sync_all()?; // the rename itself
+        crate::sync_duration().record(start.elapsed().as_secs_f64(), &[opentelemetry::KeyValue::new("kind", "document")]);
+        Ok(())
     }
 
     /// Removes a blob or document (nothing if it doesn't exist).

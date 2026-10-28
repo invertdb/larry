@@ -60,7 +60,11 @@ impl Blob {
 
     /// Makes everything appended so far durable.
     pub fn sync(&self) -> io::Result<()> {
-        self.file.sync_data()
+        let _span = tracing::info_span!("blob.sync").entered();
+        let start = std::time::Instant::now();
+        self.file.sync_data()?;
+        crate::sync_duration().record(start.elapsed().as_secs_f64(), &[opentelemetry::KeyValue::new("kind", "blob")]);
+        Ok(())
     }
 
     /// A read-only view of the blob as it is now. Later appends aren't in it; take a new view to see them.
