@@ -1,6 +1,6 @@
 # larry
 
-Blobs for invertdb. A `Store` holds named, append-only blobs, read through memory-mapped views, and small documents
+Blobs for invertdb (`invertdb-larry` on crates.io, `larry` in code). A `Store` holds named, append-only blobs, read through memory-mapped views, and small documents
 replaced atomically.
 
 ```rust
